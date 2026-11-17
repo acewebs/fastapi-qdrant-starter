@@ -2,6 +2,10 @@
 
 This template is designed to deploy with one click to [Railway](https://railway.app).
 
+The text published on the Railway template listing is kept verbatim in
+[railway-template-readme.md](railway-template-readme.md), so it has a history and can be
+diffed against what is live. Edit it there, then paste it into the template editor.
+
 ## Deploy
 
 1. Click the **Deploy on Railway** button in the main [README](../README.md)
