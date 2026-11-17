@@ -6,6 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.deps import require_api_key
 from app.db.session import get_db
 from app.schemas.document import (
+    DocumentBatchCreate,
+    DocumentBatchResponse,
     DocumentCreate,
     DocumentItemResponse,
     DocumentListResponse,
@@ -13,6 +15,7 @@ from app.schemas.document import (
 )
 from app.services.document import (
     create_document,
+    create_documents,
     delete_document,
     get_document,
     list_documents,
@@ -35,6 +38,15 @@ async def list_documents_route(
 async def create_document_route(data: DocumentCreate, db: AsyncSession = Depends(get_db)):
     document = await create_document(db, data)
     return DocumentItemResponse(item=DocumentResponse.model_validate(document))
+
+
+@router.post("/batch", response_model=DocumentBatchResponse, status_code=201)
+async def create_documents_batch_route(data: DocumentBatchCreate, db: AsyncSession = Depends(get_db)):
+    documents = await create_documents(db, data.items)
+    return DocumentBatchResponse(
+        items=[DocumentResponse.model_validate(document) for document in documents],
+        count=len(documents),
+    )
 
 
 @router.get("/{document_id}", response_model=DocumentItemResponse)

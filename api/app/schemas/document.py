@@ -27,6 +27,15 @@ class DocumentItemResponse(BaseModel):
     item: DocumentResponse
 
 
+class DocumentBatchCreate(BaseModel):
+    items: list[DocumentCreate] = Field(..., min_length=1, max_length=100)
+
+
+class DocumentBatchResponse(BaseModel):
+    items: list[DocumentResponse]
+    count: int
+
+
 class DocumentListResponse(BaseModel):
     items: list[DocumentResponse]
     total: int

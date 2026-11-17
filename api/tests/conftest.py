@@ -50,7 +50,7 @@ def fake_embeddings(monkeypatch):
 
     monkeypatch.setattr(embeddings_module, "embed_text", embed_text)
     monkeypatch.setattr(embeddings_module, "embed_texts", embed_texts)
-    monkeypatch.setattr("app.services.document.embed_text", embed_text)
+    monkeypatch.setattr("app.services.document.embed_texts", embed_texts)
     monkeypatch.setattr("app.services.search.embed_text", embed_text)
 
 

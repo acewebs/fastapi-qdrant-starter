@@ -77,8 +77,10 @@ async def test_search(client, fake_qdrant):
             self.id = "00000000-0000-0000-0000-000000000001"
             self.score = 0.91
             self.payload = {
+                "document_id": "11111111-1111-1111-1111-111111111111",
+                "chunk_index": 2,
                 "title": "Matched",
-                "content": "body",
+                "text": "the matching passage",
                 "source": None,
                 "tags": ["x"],
             }
@@ -95,3 +97,6 @@ async def test_search(client, fake_qdrant):
     assert len(data["hits"]) == 1
     assert data["hits"][0]["title"] == "Matched"
     assert data["hits"][0]["score"] == 0.91
+    assert data["hits"][0]["document_id"] == "11111111-1111-1111-1111-111111111111"
+    assert data["hits"][0]["chunk_index"] == 2
+    assert data["hits"][0]["content"] == "the matching passage"

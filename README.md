@@ -7,7 +7,9 @@ A minimal vector-search starter: FastAPI + Qdrant + PostgreSQL, designed for [Ra
 ## What You Get
 
 - **Indexing API** — `POST /api/v1/documents` persists a document to Postgres and upserts its embedding into Qdrant
-- **Semantic search API** — `POST /api/v1/search` embeds the query and returns the most similar documents
+- **Semantic search API** — `POST /api/v1/search` embeds the query and returns the most similar passages
+- **Chunked indexing**: long documents are split into overlapping passages, so retrieval returns the relevant part instead of one averaged vector per document
+- **Batch indexing**: `POST /api/v1/documents/batch` embeds every chunk of up to 100 documents in a single call
 - **Pluggable embedder** — local (fastembed) by default, switches to OpenAI as soon as `OPENAI_API_KEY` is set
 - **Production structure** — async SQLAlchemy, Alembic migrations, dockerized services
 - **One command to run** — `./dev/toolbox/run up` starts everything locally
