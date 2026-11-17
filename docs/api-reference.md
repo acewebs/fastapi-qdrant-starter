@@ -22,6 +22,7 @@ When `API_KEY` is unset (the local dev default), the API is open — no header n
 | GET | `/api/v1/app` | App info (name, env, engine, collection) |
 | GET | `/api/v1/documents` | List documents |
 | POST | `/api/v1/documents` | Index a new document |
+| POST | `/api/v1/documents/batch` | Index up to 100 documents in one call |
 | GET | `/api/v1/documents/{id}` | Get document by id |
 | DELETE | `/api/v1/documents/{id}` | Delete document (from DB + Qdrant) |
 | POST | `/api/v1/search` | Semantic search |
@@ -55,7 +56,17 @@ Response (`201`):
 }
 ```
 
-The API persists the document to Postgres, embeds `title + content`, and upserts the vector into Qdrant under the document's UUID.
+The API persists the document to Postgres, splits `content` into chunks of at most `CHUNK_MAX_LENGTH` characters with `CHUNK_OVERLAP` characters carried over, embeds each chunk together with the title, and upserts one Qdrant point per chunk. Point ids are derived from the document id and the chunk index, so re-indexing the same document overwrites its chunks instead of duplicating them.
+
+## Index many documents
+
+```bash
+curl -X POST http://localhost:8000/api/v1/documents/batch \
+  -H "Content-Type: application/json" \
+  -d '{"items": [{"title": "One", "content": "..."}, {"title": "Two", "content": "..."}]}'
+```
+
+Response (`201`) is `{"items": [...], "count": 2}`. Every chunk of every document in the batch is embedded in a single call, which is much faster than posting documents one at a time.
 
 ## Search
 
@@ -72,10 +83,11 @@ Response (`200`):
   "query": "what is a vector database",
   "hits": [
     {
-      "id": "0193f8e2-...",
+      "document_id": "0193f8e2-...",
+      "chunk_index": 2,
       "score": 0.83,
       "title": "Intro to Qdrant",
-      "content": "Qdrant is a vector database optimized for similarity search.",
+      "content": "the matching passage, not the whole document",
       "source": "docs",
       "tags": ["qdrant", "vector"]
     }
@@ -83,12 +95,14 @@ Response (`200`):
 }
 ```
 
-Optional `tags` filter narrows results to documents tagged with at least one of the provided tags:
+A hit is a chunk, so `content` is the passage that matched and `document_id` points at the row to fetch for the full text. Several hits can share a `document_id`.
+
+Optional `tags` and `sources` filters narrow results to documents matching at least one of the provided values:
 
 ```bash
 curl -X POST http://localhost:8000/api/v1/search \
   -H "Content-Type: application/json" \
-  -d '{"query": "python web framework", "tags": ["fastapi"], "limit": 5}'
+  -d '{"query": "python web framework", "tags": ["fastapi"], "sources": ["docs"], "limit": 5}'
 ```
 
 ## List documents
@@ -106,7 +120,7 @@ curl http://localhost:8000/api/v1/documents/{id}
 curl -X DELETE http://localhost:8000/api/v1/documents/{id}
 ```
 
-Delete removes the document from Postgres **and** the vector from Qdrant in one call.
+Delete removes the document from Postgres **and** every one of its chunks from Qdrant in one call.
 
 ## Data model
 

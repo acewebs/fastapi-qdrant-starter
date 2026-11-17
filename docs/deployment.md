@@ -84,6 +84,8 @@ See [embeddings.md](embeddings.md) for the full trade-offs.
 | Variable | Default | When to set |
 |----------|---------|-------------|
 | `QDRANT_COLLECTION` | `documents` | To use a different collection name |
+| `CHUNK_MAX_LENGTH` | `2000` | Maximum characters per indexed passage |
+| `CHUNK_OVERLAP` | `200` | Characters carried from the previous passage, to keep context across a split |
 | `CORS_ORIGINS` | `http://localhost:3000` | Your frontend origin(s), comma-separated |
 | `DEBUG` | `false` | `true` echoes every SQL statement into the logs |
 | `APP_NAME` | `Vector Knowledge Base API` | Shown in `/api/v1/app` |

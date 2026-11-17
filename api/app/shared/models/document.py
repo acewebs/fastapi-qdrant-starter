@@ -3,7 +3,7 @@ from datetime import datetime
 
 from sqlalchemy import JSON, DateTime, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column
-from uuid_utils import uuid7
+from uuid_utils.compat import uuid7
 
 from app.shared.db import Base
 

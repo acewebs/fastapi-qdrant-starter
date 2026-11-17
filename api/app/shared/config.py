@@ -15,6 +15,8 @@ class BaseAppSettings(BaseSettings):
     OPENAI_API_KEY: str | None = None
     OPENAI_MODEL: str = "text-embedding-3-large"
     OPENAI_DIMENSIONS: int = 1024
+    CHUNK_MAX_LENGTH: int = 2000
+    CHUNK_OVERLAP: int = 200
 
     @field_validator("DATABASE_URL")
     @classmethod

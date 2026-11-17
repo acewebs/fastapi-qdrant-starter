@@ -7,10 +7,12 @@ class SearchRequest(BaseModel):
     query: str = Field(..., min_length=1)
     limit: int = Field(10, ge=1, le=50)
     tags: list[str] | None = None
+    sources: list[str] | None = None
 
 
 class SearchHit(BaseModel):
-    id: uuid.UUID
+    document_id: uuid.UUID
+    chunk_index: int
     score: float
     title: str
     content: str
