@@ -4,7 +4,7 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends gcc && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt requirements-dev.txt ./
+COPY api/requirements.txt api/requirements-dev.txt ./
 RUN pip install --no-cache-dir -r requirements-dev.txt
 
 ENV FASTEMBED_CACHE_PATH=/opt/fastembed \
@@ -12,8 +12,10 @@ ENV FASTEMBED_CACHE_PATH=/opt/fastembed \
 
 RUN python -c "import os; from fastembed import TextEmbedding; TextEmbedding(model_name=os.environ['EMBEDDING_MODEL'])"
 
-COPY . .
+COPY api/ .
+COPY scripts/start.sh /app/start.sh
+RUN chmod +x /app/start.sh
 
 ENV PYTHONPATH=/app
 
-CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+CMD ["/app/start.sh"]

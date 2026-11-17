@@ -12,13 +12,13 @@ If the `API_KEY` env var is set on the server, all `/api/v1/documents` and `/api
 curl -H "X-API-Key: <your-key>" http://localhost:8000/api/v1/documents
 ```
 
-When `API_KEY` is unset (the local dev default), the API is open — no header needed. `/health` and `/api/v1/app` are always open so platform healthchecks work.
+When `API_KEY` is unset (the local dev default), the API is open — no header needed. `/health` and `/api/health` are always open so platform healthchecks work.
 
 ## Endpoints
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/health` | Health check |
+| GET | `/health` | Health check (also served at `/api/health`) |
 | GET | `/api/v1/app` | App info (name, env, engine, collection) |
 | GET | `/api/v1/documents` | List documents |
 | POST | `/api/v1/documents` | Index a new document |

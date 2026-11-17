@@ -2,10 +2,9 @@ from app.shared.config import BaseAppSettings
 
 
 class Settings(BaseAppSettings):
-    APP_NAME: str = "qdrant-starter-api"
+    APP_NAME: str = "Vector Knowledge Base API"
     HOST: str = "0.0.0.0"
     PORT: int = 8000
-    SECRET_KEY: str = "dev-secret-change-in-production"
     API_KEY: str | None = None
     CORS_ORIGINS: str = "http://localhost:3000"
 

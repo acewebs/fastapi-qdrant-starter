@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("Starting %s in %s mode", settings.APP_NAME, settings.APP_ENV)
+    logger.info("Starting %s with %s embeddings (%d dim)", settings.APP_NAME, settings.embed_engine, settings.embedding_dimensions)
     await init_qdrant()
     await warm_embedder()
     yield
