@@ -8,7 +8,7 @@ A minimal vector-search starter: FastAPI + Qdrant + PostgreSQL, designed for [Ra
 
 - **Indexing API** — `POST /api/v1/documents` persists a document to Postgres and upserts its embedding into Qdrant
 - **Semantic search API** — `POST /api/v1/search` embeds the query and returns the most similar documents
-- **Pluggable embedder** — local (fastembed) by default, or flip four env vars to use OpenAI
+- **Pluggable embedder** — local (fastembed) by default, switches to OpenAI as soon as `OPENAI_API_KEY` is set
 - **Production structure** — async SQLAlchemy, Alembic migrations, dockerized services
 - **One command to run** — `./dev/toolbox/run up` starts everything locally
 
@@ -70,7 +70,7 @@ Full endpoint reference: [docs/api-reference.md](docs/api-reference.md).
 
 ## Deploy on Railway
 
-Click the button at the top — Railway forks the repo and provisions `api`, Postgres, and Qdrant. The template auto-generates random secrets for `SECRET_KEY`, `POSTGRES_PASSWORD`, `QDRANT__SERVICE__API_KEY`, and **`API_KEY`**.
+Click the button at the top — Railway forks the repo and provisions `api`, Postgres, and Qdrant. The template auto-generates random secrets for `POSTGRES_PASSWORD`, `QDRANT__SERVICE__API_KEY`, and **`API_KEY`**.
 
 ### After the template deploys — grab your API key
 
@@ -84,7 +84,7 @@ The API is protected with `API_KEY`. To call it, copy the auto-generated value f
 curl -H "X-API-Key: <paste-value-here>" https://your-api.up.railway.app/api/v1/documents
 ```
 
-`/health` and `/api/v1/app` stay open (no key needed) so platform healthchecks work.
+`/health` and `/api/health` stay open (no key needed) so platform healthchecks work. Everything under `/api/v1` requires the key.
 
 Full walkthrough + env var reference: [docs/deployment.md](docs/deployment.md).
 

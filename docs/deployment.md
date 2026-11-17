@@ -12,7 +12,7 @@ This template is designed to deploy with one click to [Railway](https://railway.
 
 If you're wiring a Railway project yourself instead of using the template:
 
-1. **`api`** — "Deploy from GitHub repo" → this repo. **Set Root Directory to `api`.** Railway will auto-detect `api/Dockerfile` and `api/railway.toml` (which sets `/health` as the healthcheck).
+1. **`api`** — "Deploy from GitHub repo" → this repo, Root Directory `/`, which is where the Dockerfile lives. Set the healthcheck path to `/api/health` on the service itself: Railway no longer reads config-as-code for new services.
 2. **`db`** — "Deploy from Docker Image" → `postgres:16`. Attach a volume to `/var/lib/postgresql/data`.
 3. **`qdrant`** — "Deploy from Docker Image" → `qdrant/qdrant:v1.12.4`. Attach a volume to `/qdrant/storage`.
 4. Set env vars on each service (see below), then redeploy `api`.
@@ -64,17 +64,18 @@ Every variable has a safe default, so the template works out of the box. Values 
 | `DATABASE_URL` | `postgresql://${{db.POSTGRES_USER}}:${{db.POSTGRES_PASSWORD}}@${{db.RAILWAY_PRIVATE_DOMAIN}}:5432/${{db.POSTGRES_DB}}` | Railway reference; API auto-normalizes the scheme to `postgresql+asyncpg://` |
 | `QDRANT_URL` | `http://${{qdrant.RAILWAY_PRIVATE_DOMAIN}}:6333` | Internal networking to the Qdrant service |
 | `QDRANT_API_KEY` | `${{qdrant.QDRANT__SERVICE__API_KEY}}` | Mirror whatever is set on Qdrant |
-| `SECRET_KEY` | **Generate random** | 64+ chars |
-| `API_KEY` | **Generate random** | 32+ chars. Strongly recommended on any public deploy. When set, `/api/v1/documents` and `/api/v1/search` require the header `X-API-Key: <value>`. `/health` and `/api/v1/app` stay open. Leave empty to keep the API open. |
+| `API_KEY` | **Generate random** | 32+ chars. Strongly recommended on any public deploy. When set, `/api/v1/documents` and `/api/v1/search` require the header `X-API-Key: <value>`. `/health` and `/api/health` stay open. Leave empty to keep the API open. |
 
 **Embeddings — pick one**
 
 | Variable | Value (fastembed, default) | Value (OpenAI) |
 |----------|----------------------------|----------------|
-| `EMBED_ENGINE` | `fastembed` | `openai` |
-| `EMBED_ENGINE_KEY` | — | `sk-...` (your OpenAI API key) |
-| `EMBEDDING_MODEL` | `BAAI/bge-small-en-v1.5` | `text-embedding-3-small` |
-| `EMBEDDING_DIM` | `384` | `1536` |
+| `EMBED_ENGINE` | `auto` | `auto` |
+| `OPENAI_API_KEY` | — | `sk-...` (setting it is what selects OpenAI) |
+| `OPENAI_MODEL` | — | `text-embedding-3-large` |
+| `OPENAI_DIMENSIONS` | — | `1024` |
+| `EMBEDDING_MODEL` | `BAAI/bge-small-en-v1.5` | — |
+| `EMBEDDING_DIM` | `384` | — |
 
 See [embeddings.md](embeddings.md) for the full trade-offs.
 
@@ -84,8 +85,9 @@ See [embeddings.md](embeddings.md) for the full trade-offs.
 |----------|---------|-------------|
 | `QDRANT_COLLECTION` | `documents` | To use a different collection name |
 | `CORS_ORIGINS` | `http://localhost:3000` | Your frontend origin(s), comma-separated |
-| `APP_ENV` | `development` | Set to `production` on Railway |
-| `APP_NAME` | `qdrant-starter-api` | Shown in `/api/v1/app` |
+| `DEBUG` | `false` | `true` echoes every SQL statement into the logs |
+| `APP_NAME` | `Vector Knowledge Base API` | Shown in `/api/v1/app` |
+| `SKIP_MIGRATIONS` | `false` | `true` starts without running alembic |
 | `LOG_LEVEL` | `info` | `debug`, `info`, `warning`, `error` |
 | `HOST` | `0.0.0.0` | Almost never needed |
 | `PORT` | `8000` | Railway injects this automatically — don't override |

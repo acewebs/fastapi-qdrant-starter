@@ -27,13 +27,17 @@ async def _embed_fastembed(texts: list[str]) -> list[list[float]]:
 
 
 async def _embed_openai(texts: list[str]) -> list[list[float]]:
-    if not settings.EMBED_ENGINE_KEY:
-        raise RuntimeError("EMBED_ENGINE=openai requires EMBED_ENGINE_KEY")
+    if not settings.OPENAI_API_KEY:
+        raise RuntimeError("EMBED_ENGINE=openai requires OPENAI_API_KEY")
     async with httpx.AsyncClient(timeout=30.0) as client:
         response = await client.post(
             "https://api.openai.com/v1/embeddings",
-            headers={"Authorization": f"Bearer {settings.EMBED_ENGINE_KEY}"},
-            json={"model": settings.EMBEDDING_MODEL, "input": texts},
+            headers={"Authorization": f"Bearer {settings.OPENAI_API_KEY}"},
+            json={
+                "model": settings.OPENAI_MODEL,
+                "dimensions": settings.OPENAI_DIMENSIONS,
+                "input": texts,
+            },
         )
         response.raise_for_status()
         data = response.json()
@@ -43,12 +47,12 @@ async def _embed_openai(texts: list[str]) -> list[list[float]]:
 async def embed_texts(texts: list[str]) -> list[list[float]]:
     if not texts:
         return []
-    engine = settings.EMBED_ENGINE.lower()
+    engine = settings.embed_engine
     if engine == "openai":
         return await _embed_openai(texts)
     if engine == "fastembed":
         return await _embed_fastembed(texts)
-    raise RuntimeError(f"Unknown EMBED_ENGINE: {settings.EMBED_ENGINE!r} (expected 'fastembed' or 'openai')")
+    raise RuntimeError(f"Unknown EMBED_ENGINE: {settings.EMBED_ENGINE!r} (expected 'auto', 'fastembed' or 'openai')")
 
 
 async def embed_text(text: str) -> list[float]:
@@ -57,7 +61,7 @@ async def embed_text(text: str) -> list[float]:
 
 
 async def warm_embedder() -> None:
-    if settings.EMBED_ENGINE.lower() != "fastembed":
+    if settings.embed_engine != "fastembed":
         return
     try:
         await _embed_fastembed(["warmup"])

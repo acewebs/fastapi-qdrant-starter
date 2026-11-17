@@ -17,7 +17,7 @@ cp .env.example .env
 
 `docker-compose` reads `.env` automatically on `up`. The file is gitignored.
 
-You **must** create a `.env` only if you want to use OpenAI for embeddings — then set `EMBED_ENGINE=openai` and `EMBED_ENGINE_KEY=sk-...` (see [embeddings.md](embeddings.md)).
+You **must** create a `.env` only if you want to use OpenAI for embeddings — then set `OPENAI_API_KEY=sk-...` (see [embeddings.md](embeddings.md)).
 
 ## Start everything
 

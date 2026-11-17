@@ -1,8 +1,6 @@
 # Embeddings
 
-The API turns text into vectors using one of two built-in engines. You pick which one by setting `EMBED_ENGINE`.
-
-Both engines use the same four env vars — no code changes needed to switch.
+The API turns text into vectors using one of two built-in engines. `EMBED_ENGINE` defaults to `auto`: OpenAI when `OPENAI_API_KEY` is set, fastembed otherwise. Set `EMBED_ENGINE` explicitly to force one.
 
 ## Option A — fastembed (default, local, no API key)
 
@@ -29,10 +27,9 @@ Trade-offs:
 Calls OpenAI's `/v1/embeddings`. You need an API key.
 
 ```
-EMBED_ENGINE=openai
-EMBED_ENGINE_KEY=sk-...
-EMBEDDING_MODEL=text-embedding-3-small
-EMBEDDING_DIM=1536
+OPENAI_API_KEY=sk-...
+OPENAI_MODEL=text-embedding-3-large
+OPENAI_DIMENSIONS=1024
 ```
 
 Good fit when:
@@ -50,17 +47,14 @@ Trade-offs:
 
 ```bash
 # .env
-EMBED_ENGINE=openai
-EMBED_ENGINE_KEY=sk-...
-EMBEDDING_MODEL=text-embedding-3-small
-EMBEDDING_DIM=1536
+OPENAI_API_KEY=sk-...
 ```
 
 **On Railway** — add them as service variables on the `api` service, then redeploy. See [deployment.md](deployment.md).
 
 ## Switching engines after you've already indexed data
 
-Vectors from different models live in different spaces and aren't comparable. If you change `EMBED_ENGINE`, `EMBEDDING_MODEL`, or `EMBEDDING_DIM` after indexing, you must wipe Qdrant and re-index.
+Vectors from different models live in different spaces and aren't comparable. If you change the engine, model or dimensions after indexing, you must wipe Qdrant and re-index. The API refuses to start when the configured dimensions disagree with the existing collection, so this fails loudly at boot rather than per request.
 
 **Locally:**
 
@@ -84,5 +78,5 @@ To add Cohere, Voyage, or any other provider:
 
 1. Open `api/app/services/embeddings.py`
 2. Add an `_embed_<name>` async function that takes `list[str]` and returns `list[list[float]]`
-3. Add a branch in `embed_texts` that dispatches on `settings.EMBED_ENGINE == "<name>"`
+3. Add a branch in `embed_texts` that dispatches on `settings.embed_engine == "<name>"`
 4. Update `EMBEDDING_DIM` to match that provider's vector size
