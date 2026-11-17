@@ -7,6 +7,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends gcc && rm -rf /
 COPY requirements.txt requirements-dev.txt ./
 RUN pip install --no-cache-dir -r requirements-dev.txt
 
+ENV FASTEMBED_CACHE_PATH=/opt/fastembed \
+    EMBEDDING_MODEL=BAAI/bge-small-en-v1.5
+
+RUN python -c "import os; from fastembed import TextEmbedding; TextEmbedding(model_name=os.environ['EMBEDDING_MODEL'])"
+
 COPY . .
 
 ENV PYTHONPATH=/app

@@ -54,3 +54,12 @@ async def embed_texts(texts: list[str]) -> list[list[float]]:
 async def embed_text(text: str) -> list[float]:
     vectors = await embed_texts([text])
     return vectors[0]
+
+
+async def warm_embedder() -> None:
+    if settings.EMBED_ENGINE.lower() != "fastembed":
+        return
+    try:
+        await _embed_fastembed(["warmup"])
+    except Exception:
+        logger.exception("Embedder warm-up failed; first request will pay the load cost")
