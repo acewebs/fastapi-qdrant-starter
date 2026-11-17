@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes import app_info, documents, health, search
 from app.core.config import settings
 from app.core.qdrant import close_qdrant, init_qdrant
+from app.services.embeddings import warm_embedder
 
 logging.basicConfig(level=settings.LOG_LEVEL.upper())
 logger = logging.getLogger(__name__)
@@ -16,6 +17,7 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     logger.info("Starting %s in %s mode", settings.APP_NAME, settings.APP_ENV)
     await init_qdrant()
+    await warm_embedder()
     yield
     await close_qdrant()
     logger.info("Shutdown complete")

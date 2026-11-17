@@ -34,9 +34,22 @@ async def _ensure_collection() -> None:
     exists = await client.collection_exists(settings.QDRANT_COLLECTION)
     if exists:
         logger.info("Qdrant collection %s already exists", settings.QDRANT_COLLECTION)
+        await _assert_collection_dim()
         return
     await client.create_collection(
         collection_name=settings.QDRANT_COLLECTION,
         vectors_config=VectorParams(size=settings.EMBEDDING_DIM, distance=Distance.COSINE),
     )
     logger.info("Created Qdrant collection %s (dim=%d)", settings.QDRANT_COLLECTION, settings.EMBEDDING_DIM)
+
+
+async def _assert_collection_dim() -> None:
+    info = await get_qdrant().get_collection(settings.QDRANT_COLLECTION)
+    vectors = info.config.params.vectors
+    if not isinstance(vectors, VectorParams) or vectors.size == settings.EMBEDDING_DIM:
+        return
+    raise RuntimeError(
+        f"Qdrant collection {settings.QDRANT_COLLECTION!r} stores {vectors.size}-dim vectors "
+        f"but EMBEDDING_DIM is {settings.EMBEDDING_DIM}. Changing the embedding model needs a "
+        f"reindex: point QDRANT_COLLECTION at a new collection, or delete the existing one."
+    )
