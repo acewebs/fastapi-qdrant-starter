@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:16
+    image: postgres:18
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-app}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-app}
@@ -8,7 +8,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-app} -d ${POSTGRES_DB:-app}"]
       interval: 2s
@@ -16,7 +16,7 @@ services:
       retries: 20
 
   qdrant:
-    image: qdrant/qdrant:v1.12.4
+    image: qdrant/qdrant:v1.20.2
     environment:
       QDRANT__SERVICE__API_KEY: ${QDRANT_API_KEY:-}
     ports:

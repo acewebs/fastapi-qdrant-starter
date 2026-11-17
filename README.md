@@ -32,8 +32,8 @@ On `POST /api/v1/search`: embed query → ANN search in Qdrant → return hits w
 | Service | Tech | Description |
 |---------|------|-------------|
 | **api** | FastAPI, SQLAlchemy, Alembic | REST API + embedding pipeline |
-| **db** | PostgreSQL 16 | Document metadata store |
-| **qdrant** | Qdrant 1.12 | Vector database |
+| **db** | PostgreSQL 18 | Document metadata store |
+| **qdrant** | Qdrant 1.20 | Vector database |
 
 ## Quick Start (Local)
 
