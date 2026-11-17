@@ -27,6 +27,11 @@ You **must** create a `.env` only if you want to use OpenAI for embeddings — t
 
 This builds the `api` image and starts `api`, `db` (Postgres), and `qdrant`.
 
+If you have a local stack from before Postgres 18, `db` will refuse to start: the 18 image
+stores data under a major-version directory and the compose volume now mounts at
+`/var/lib/postgresql` instead of `/var/lib/postgresql/data`. Run `docker compose down -v`
+and start again. That drops local data, which is only ever test data here.
+
 - **API**: http://localhost:8000
 - **API Docs**: http://localhost:8000/docs
 - **Qdrant Dashboard**: http://localhost:6333/dashboard

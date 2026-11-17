@@ -13,8 +13,8 @@ This template is designed to deploy with one click to [Railway](https://railway.
 If you're wiring a Railway project yourself instead of using the template:
 
 1. **`api`** — "Deploy from GitHub repo" → this repo, Root Directory `/`, which is where the Dockerfile lives. Set the healthcheck path to `/api/health` on the service itself: Railway no longer reads config-as-code for new services.
-2. **`db`** — "Deploy from Docker Image" → `postgres:16`. Attach a volume to `/var/lib/postgresql/data`.
-3. **`qdrant`** — "Deploy from Docker Image" → `qdrant/qdrant:v1.12.4`. Attach a volume to `/qdrant/storage`.
+2. **`db`** — "Deploy from Docker Image" → `postgres:18`. Attach a volume to `/var/lib/postgresql/data`.
+3. **`qdrant`** — "Deploy from Docker Image" → `qdrant/qdrant:v1.20.2`. Use this image rather than an `-unprivileged` variant: those run as a non-root user and cannot write a Railway volume. Attach a volume to `/qdrant/storage`.
 4. Set env vars on each service (see below), then redeploy `api`.
 
 Once the deploy is green, your API is live at the Railway-generated domain for the `api` service. Visit `/docs` for the auto-generated OpenAPI UI.
