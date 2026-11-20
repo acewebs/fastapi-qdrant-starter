@@ -12,7 +12,7 @@ The deploy asks for nothing. On first boot the API runs its migrations, creates 
 
 - **RAG backend for an AI assistant**: retrieve relevant context before generating a response
 - **Internal documentation search**: query company docs, wikis or policies in natural language
-- **Knowledge for automation workflows**: give an n8n or Zapier agent a searchable memory. Pairs with the [n8n Production Setup with Workers](https://railway.com/deploy/n8n-production-starter-with-workers) template: deploy both into the same project and n8n reaches this API privately, with no public domain needed and no embedding provider key
+- **Knowledge for automation workflows**: give an n8n or Zapier agent a searchable memory. Pairs with the [n8n Production Setup with Workers](https://railway.com/deploy/n8n-production-starter-with-workers?referralCode=aceweb&utm_medium=integration&utm_source=template&utm_campaign=generic) template: deploy both into the same project and n8n reaches this API privately, with no public domain needed and no embedding provider key
 
 ## Dependencies for Vector Knowledge Base API Hosting
 

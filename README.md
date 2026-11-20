@@ -2,7 +2,7 @@
 
 A minimal vector-search starter: FastAPI + Qdrant + PostgreSQL, designed for [Railway](https://railway.app) deployment.
 
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/fastapi-qdrant-starter)
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/vector-knowledge-base-api?referralCode=aceweb&utm_medium=integration&utm_source=template&utm_campaign=generic)
 
 ## What You Get
 
